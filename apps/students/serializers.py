@@ -20,6 +20,12 @@ class StudentAssignmentSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError('Student cannot set state to GRADED')
             if attrs['state'] == 'SUBMITTED' and not ('teacher' in attrs and attrs['teacher']):
                 raise serializers.ValidationError('Teacher ID has to be sent to set state to SUBMITTED')
+        
+        if self.instance != None and self.instance.state == "GRADED":
+            raise serializers.ValidationError('Student cannot update graded assignment')
+
+        if self.instance != None and self.instance.state == "SUBMITTED":
+            raise serializers.ValidationError('Student cannot update submitted assignment')
 
         if self.partial:
             return attrs

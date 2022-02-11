@@ -101,3 +101,40 @@ def test_submit_assignment_student_1(api_client, student_1):
     assert assignment['teacher'] == 1
     assert assignment['grade'] is None
     assert assignment['id'] is not None
+
+# adding new tests
+
+@pytest.mark.django_db()
+def test_update_graded_assignment_student_2(api_client, student_2):
+    response = api_client.patch(
+        reverse('students-assignments'),
+        data=json.dumps({
+            'id': 8,
+            'content': "change content"
+        }),
+        HTTP_X_Principal=student_2,
+        content_type='application/json'
+    )
+
+    assert response.status_code == 400
+    error = response.json()
+
+    assert error['non_field_errors'] == ['Student cannot update graded assignment']
+
+@pytest.mark.django_db()
+def test_update_submitted_assignment_student_2(api_client, student_2):
+    response = api_client.patch(
+        reverse('students-assignments'),
+        data=json.dumps({
+            'id': 4,
+            'content': "change content"
+        }),
+        HTTP_X_Principal=student_2,
+        content_type='application/json'
+    )
+
+    assert response.status_code == 400
+    error = response.json()
+
+    assert error['non_field_errors'] == ['Student cannot update submitted assignment']    
+    
